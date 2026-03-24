@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الغرامات المرورية - بوابة العراق الرقمية</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <button class="theme-toggle" id="themeToggle" title="تبديل وضع الإضاءة">
+        <svg class="sun-icon" viewBox="0 0 24 24"><path d="M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0 c-0.55,0-1,0.45-1,1S1.45,13,2,13L2,13z M20,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13L20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2L11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2 c0-0.55-0.45-1-1-1S11,19.45,11,20L11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0s-0.39,1.03,0,1.41l1.41,1.41 c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95c-0.39-0.39-1.03-0.39-1.41,0s-0.39,1.03,0,1.41l1.41,1.41 c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L18.36,16.95z M5.99,19.42c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41l-1.41-1.41 c-0.39-0.39-1.03-0.39-1.41,0s-0.39,1.03,0,1.41L5.99,19.42z M18.36,7.05c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41l-1.41-1.41 c-0.39-0.39-1.03-0.39-1.41,0s-0.39,1.03,0,1.41L18.36,7.05z"/></svg>
+        <svg class="moon-icon" viewBox="0 0 24 24"><path d="M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36c-0.98,1.37-2.58,2.26-4.4,2.26 c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg>
+    </button>
+
+    <div class="container">
+        <header class="header">
+            <h1 class="title">الغرامات المرورية</h1>
+            <p class="subtitle">بوابة الاستعلام الرقمي لمركبات جمهورية العراق</p>
+        </header>
+
+        <div class="section">
+            <div class="input-group">
+                <span class="hash-icon">#</span>
+                <input type="text" placeholder="ادخل رقم السنوية..." id="searchInput">
+                <span class="info-icon" id="infoIcon">
+                    <svg width="20" height="20" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/></svg>
+                </span>
+            </div>
+            <button id="searchButton" class="primary-btn">
+                <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                <span>استعلام</span>
+            </button>
+        </div>
+
+        <div id="resultContainer" class="result-container">
+            <div class="empty-state" id="emptyState">
+                <p class="result-message">أدخل رقم السنوية للمركبة أعلاه لبدء الاستعلام.</p>
+            </div>
+        </div>
+
+        <footer class="footer">
+            Made with <span class="heart">❤️</span> by <span class="made-by">@Android_AppsX</span>
+        </footer>
+    </div>
+
+    <div id="infoModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close-icon" id="closeModalIcon" title="إغلاق">
+                <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            </button>
+            
+            <h3 class="modal-title">أين أجد رقم السنوية؟</h3>
+            
+            <img src="https://raw.githubusercontent.com/SIRIS9/muroor-iq/refs/heads/main/licence.png" alt="صورة توضيحية لمكان رقم السنوية" class="modal-image">
+            
+            <p class="modal-desc">رقم السنوية هو الرقم المطبوع على بطاقة تسجيل المركبة (السنوية)، كما هو موضح في الصورة أعلاه. تأكد من إدخال الأرقام فقط بشكل صحيح.</p>
+            
+            <button class="secondary-btn" id="closeModalBtn">حسناً، فهمت</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
