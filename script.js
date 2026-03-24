@@ -1,10 +1,33 @@
 document.addEventListener('DOMContentLoaded', () => {
-
-    // --- إدارة وضع الإضاءة ---
     const body = document.body;
     const themeToggle = document.getElementById('themeToggle');
+    const searchInput = document.getElementById('searchInput');
+    const clearIcon = document.getElementById('clearIcon');
     const currentTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    
     body.setAttribute('data-theme', currentTheme);
+
+    function toggleClearBtn() {
+        if (searchInput.value.trim().length > 0) {
+            clearIcon.classList.add('visible');
+        } else {
+            clearIcon.classList.remove('visible');
+        }
+    }
+
+    searchInput.addEventListener('input', toggleClearBtn);
+
+    clearIcon.addEventListener('click', () => {
+        searchInput.value = '';
+        toggleClearBtn();
+        searchInput.focus();
+    });
+
+    const savedVid = localStorage.getItem('savedVid');
+    if (savedVid) {
+        searchInput.value = savedVid;
+        toggleClearBtn();
+    }
 
     themeToggle.addEventListener('click', () => {
         const theme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
@@ -12,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('theme', theme);
     });
 
-    // --- نظام النافذة المنبثقة (Modal) لمعلومات السنوية ---
     const infoIcon = document.getElementById('infoIcon');
     const modalOverlay = document.getElementById('infoModal');
     const closeModalBtn = document.getElementById('closeModalBtn');
@@ -39,9 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- نظام الاستعلام المباشر من المتصفح ---
     const searchButton = document.getElementById('searchButton');
-    const searchInput = document.getElementById('searchInput');
     const resultContainer = document.getElementById('resultContainer');
 
     searchButton.addEventListener('click', async () => {
@@ -53,36 +73,31 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // تفعيل حالة التحميل
         searchButton.classList.add('loading');
         searchButton.disabled = true;
         resultContainer.innerHTML = `
             <div class="empty-state">
-                <p style="color: var(--accent-blue);">جاري الاتصال المباشر بقاعدة البيانات...</p>
+                <p style="color: var(--accent-blue);">جاري الاتصال بقاعدة البيانات...</p>
             </div>
         `;
 
         try {
-            // التوكن الفعال الذي جربناه في cURL
+            localStorage.setItem('savedVid', query);
+            
             const AUTH_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwaS5heW5pcS5hcHAvdjMvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE3NjYwNTU5ODIsImV4cCI6MTc5NzU5MTk4MiwibmJmIjoxNzY2MDU1OTgyLCJqdGkiOiJaWE1nQlZDUzEwZHdlVkQ3Iiwic3ViIjoiMjAyNzU2NSIsInBydiI6ImUzYWNhMWNmYTM2ZmIxYTU2ODkwZGEwMWY3ZWVhNGU2NDY5YjUzODYiLCJwaG9uZV9udW1iZXIiOiIrOTY0NzgwMzQzNjE4MyIsImNpdGl6ZW5fbmFtZSI6bnVsbCwiY2l0aXplbl9uYXRpb25hbF9pZCI6bnVsbCwiY2l0aXplbl9waG9uZSI6Iis5NjQ3ODAzNDM2MTgzIiwiY2l0aXplbl9nZW5kZXIiOm51bGx9.u5sD6ROESvg0K-zAOzkUV886geizdqfcJdv49bIXD-I";
-
-            // تجهيز البيانات (رقم السنوية فقط)
             const formData = new FormData();
             formData.append('vid', query);
 
-            // الاتصال المباشر بسيرفر عيني (يتطلب إيقاف حماية CORS في المتصفح)
             const response = await fetch('https://api.ayniq.app/v3/api/fines/query/vid', {
                 method: 'POST',
                 headers: {
                     'authorization': `Bearer ${AUTH_TOKEN}`
-                    // أزلنا كل الهيدرز الأخرى بناءً على تجربتك الناجحة
                 },
                 body: formData
             });
 
             const result = await response.json();
 
-            // معالجة النتيجة
             if (result.status === 200) {
                 if (result.data && result.data.length > 0) {
                     renderResults(result.data);
@@ -95,19 +110,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     `;
                 }
             } else {
-                showError(`خطأ من الخادم الأصلي: ${result.message}`);
+                showError(`${result.message}`);
             }
 
         } catch (error) {
-            console.error("Error Details:", error);
-            showError("حدث خطأ في الاتصال. إذا كانت هذه مشكلة CORS، يرجى تفعيل إضافة 'Allow CORS' في متصفحك. | التفاصيل: " + error.message);
+            showError("حدث خطأ في الاتصال، يرجى تفعيل إضافة كسر الـ CORS.");
         } finally {
             searchButton.classList.remove('loading');
             searchButton.disabled = false;
         }
     });
 
-    // --- دالة رسم الواجهة والبطاقات ---
     function renderResults(fines) {
         let totalAmount = 0;
         fines.forEach(fine => { totalAmount += fine.finalAmount; });
@@ -132,11 +145,24 @@ document.addEventListener('DOMContentLoaded', () => {
             let timeStr = dateObj.toLocaleTimeString('en-US', timeOptions);
             timeStr = timeStr.replace(/AM/i, 'صباحاً').replace(/PM/i, 'مساءً');
 
+            let badgesHtml = `<span class="badge-unpaid">غير مدفوعة</span>`;
+            let amountHtml = `<span class="row-value amount">${fine.finalAmount.toLocaleString('en-US')} <span style="font-size: 14px;">د.ع</span></span>`;
+            
+            if (fine.doubled) {
+                badgesHtml += `<span class="badge-doubled">مضاعفة</span>`;
+                amountHtml = `
+                    <span class="original-amount">${fine.amount.toLocaleString('en-US')} د.ع</span>
+                    <span class="row-value amount" style="color: #f43f5e;">${fine.finalAmount.toLocaleString('en-US')} <span style="font-size: 14px;">د.ع</span></span>
+                `;
+            }
+
             htmlContent += `
                 <div class="fine-card">
                     <div class="card-header">
                         <span class="ref-number">REF: ${fine.fineId}</span>
-                        <span class="badge-unpaid">غير مدفوعة</span>
+                        <div class="card-badges">
+                            ${badgesHtml}
+                        </div>
                     </div>
                     <div class="card-row">
                         <div class="row-icon icon-calendar">
@@ -171,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         <div class="row-content">
                             <span class="row-label">مبلغ الغرامة</span>
-                            <span class="row-value amount">${fine.finalAmount.toLocaleString('en-US')} <span style="font-size: 14px;">د.ع</span></span>
+                            ${amountHtml}
                         </div>
                     </div>
                 </div>
