@@ -61,12 +61,13 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         try {
-            const formData = new FormData();
-            formData.append('vid', query);
-
-            const response = await fetch('https://api.rhine-ix.workers.dev/', {
+            // الاتصال بخادم Vercel الداخلي (نفس النطاق)
+            const response = await fetch('/api', {
                 method: 'POST',
-                body: formData
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ vid: query })
             });
 
             const result = await response.json();
